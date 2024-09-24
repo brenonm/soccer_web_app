@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home page</title>
+</head>
+<body>
+    <h1>Home Page</h1>
+    <p>Hello soccer fan!</p>
+    <p>Here is the data from {{content}}!</p>
+    <ol id="data-list"></ol>
+    <script>
+        
+        async function fetchDataFromPython() {
+            try {
+                const response = await fetch('/api/team-data');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Could not fetch team data:", error);
+                return []; // Return an empty array in case of error
+            }
+        }
+
+        function populateList(data) {
+            const dataList = document.getElementById('data-list');
+            dataList.innerHTML = ''; // Clear existing items
+
+            data.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = `Team: ${item.team_name}, Matches: ${item.matches}, Points: ${item.points}, Win: ${item.win}, Draw: ${item.draw}, Loss: ${item.loss}`;
+                dataList.appendChild(li);
+            });
+        }
+
+        async function updateData() {
+            const data = await fetchDataFromPython();
+            populateList(data);
+        }
+
+        // Initial data fetch
+        updateData();
+    </script>
+</body>
+</html>
