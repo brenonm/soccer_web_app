@@ -1,6 +1,7 @@
 import pandas as pd
 import requests
 import json
+from credentials import x_auth_token
 
 
 #Functions
@@ -18,7 +19,7 @@ def request_footbal_data(request_url):
     #headers = {"X-Auth-Token": "YOUR_API_KEY"}  # Replace with your actual API key
 
     response = requests.get(url = request_url
-                            ,headers = {'X-Auth-Token' : '0d61136821b2442c91aa295d9f17c33d'})
+                            ,headers = {'X-Auth-Token' : x_auth_token})
 
     if response.status_code == 200:
         data = response.json()
