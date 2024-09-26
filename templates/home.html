@@ -32,8 +32,27 @@
 
             data.forEach(item => {
                 const li = document.createElement('li');
-                li.textContent = `Team: ${item.team_name}, Matches: ${item.matches}, Points: ${item.points}, Win: ${item.win}, Draw: ${item.draw}, Loss: ${item.loss}`;
-                dataList.appendChild(li);
+                
+                //create image element
+                const img = document.createElement('img');
+                img.src = item.team_symbol; // Assuming each item has an image_url property
+                img.alt = item.team_name;
+                img.style.width = '20px'; // Set width to make it icon-sized
+                img.style.height = '20px'; // Set height to make it icon-sized
+                img.style.marginRight = '5px'; // Add some space between image and text
+                
+                //create text node
+                const textNode = document.createTextNode(
+                    `Team: ${item.team_name}, Matches: ${item.matches}, Points: ${item.points}, Win: ${item.win}, Draw: ${item.draw}, Loss: ${item.loss}`
+            );
+
+            //Append image and text to list item
+            li.appendChild(img);
+            li.appendChild(textNode);
+
+            // Append the list item to the dataList
+            dataList.appendChild(li);
+
             });
         }
 

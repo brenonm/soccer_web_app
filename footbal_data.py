@@ -19,7 +19,8 @@ def request_footbal_data(request_url):
     #headers = {"X-Auth-Token": "YOUR_API_KEY"}  # Replace with your actual API key
 
     response = requests.get(url = request_url
-                            ,headers = {'X-Auth-Token' : x_auth_token})
+                            ,headers = {'X-Auth-Token' : x_auth_token}
+                            ,timeout = 10)
 
     if response.status_code == 200:
         data = response.json()
@@ -29,9 +30,7 @@ def request_footbal_data(request_url):
     else:
         print(f"Failed to retrieve data: {response.status_code}")
 
-teams = 'https://api.football-data.org/v4/competitions/2013/teams'
 
-all_teams = request_footbal_data(request_url = teams)
 
 def season_games():
 
@@ -81,23 +80,27 @@ def season_games():
     season_performance = []
 
     for team in brasileirao_teams:
-        
+    
         win = 0
         loss = 0
         draw = 0
         matches = 0
-        points = 0   
-        
+        points = 0
+        team_symbol = ''
+            
         for match in match_list:
             
             if match['homeTeam'] == team and match['result'] == 'HOME_TEAM':
                 win += 1
+                team_symbol = match['homeTeamSymbol']
             
             elif match['homeTeam'] == team and match['result'] == 'AWAY_TEAM':
                 loss += 1
+                team_symbol = match['homeTeamSymbol']
             
             elif match['homeTeam'] == team and match['result'] == 'DRAW':
                 draw += 1
+                team_symbol = match['homeTeamSymbol']
             
             elif match['awayTeam'] == team and match['result'] == 'AWAY_TEAM':
                 win += 1
@@ -115,9 +118,10 @@ def season_games():
         season_performance.append({'team_name' : team
                                 ,'win' : win
                                 ,'loss' : loss
-                                ,'draw' : draw
+                                ,'draw' : draw 
                                 ,'matches' : matches
                                 ,'points' : points
+                                ,'team_symbol' : team_symbol
                                 })
         
     
