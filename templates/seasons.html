@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f4f4f4;
+        }
+        #data-container {
+            overflow-x: auto; /* Makes table scrollable on small screens */
+        }
+    </style>
+</head>
+<body>
+    <h1>Home Page</h1>
+    <p>Hello soccer fan!</p>
+    
+    <label for="yearInput">Enter a Year:</label>
+    <input type="number" id="yearInput" placeholder="e.g., 2023">
+    <button onclick="loadData()">Fetch Data</button>
+
+    <div id="data-container">
+        <table id="data-table">
+            <thead></thead>
+            <tbody></tbody>
+        </table>
+    </div>
+
+    <script>
+        async function fetchDataFromPython(year) {
+            try {
+                const response = await fetch(`/api/seasons/${year}`); // Fetch data from Flask
+                if (!response.ok) {
+                    throw new Error(`HTTP error! Status: ${response.status}`);
+                }
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error("Could not fetch team data:", error);
+                return [];
+            }
+        }
+
+        async function loadData() {
+            const year = document.getElementById('yearInput').value;
+            if (!year) {
+                alert("Please enter a year!");
+                return;
+            }
+
+            const data = await fetchDataFromPython(year);
+            if (data.length === 0) {
+                alert("No data found for this year.");
+                return;
+            }
+
+            // Display only the first 5 rows (head of DataFrame)
+            renderTable(data.slice(0, 5));
+        }
+
+        function renderTable(data) {
+            const tableHead = document.querySelector("#data-table thead");
+            const tableBody = document.querySelector("#data-table tbody");
+
+            tableHead.innerHTML = "";
+            tableBody.innerHTML = "";
+
+            if (data.length === 0) return;
+
+            // Create table headers dynamically
+            const headers = Object.keys(data[0]);
+            const headerRow = document.createElement("tr");
+            headers.forEach(header => {
+                const th = document.createElement("th");
+                th.textContent = header;
+                headerRow.appendChild(th);
+            });
+            tableHead.appendChild(headerRow);
+
+            // Populate table rows
+            data.forEach(row => {
+                const tr = document.createElement("tr");
+                headers.forEach(header => {
+                    const td = document.createElement("td");
+                    td.textContent = row[header];
+                    tr.appendChild(td);
+                });
+                tableBody.appendChild(tr);
+            });
+        }
+    </script>
+</body>
+</html>
