@@ -1,11 +1,18 @@
 from flask import Flask, redirect, url_for, render_template, jsonify
 import pandas as pd
+import os
 import requests
 import json
 from footbal_data import season_games
 
+print("Current working directory:", os.getcwd())
+
 #Flask
 app = Flask(__name__)
+
+@app.route("/") #we use "/" for the homepage in order to be redirected automatically to the home page.If we used "/home", the user would not be redirected automatically
+def index():
+    return render_template("index.html")
 
 #indicate how to access the webpage defined by the function below.
 @app.route("/<team_name>") #we use "/" for the homepage in order to be redirected automatically to the home page.If we used "/home", the user would not be redirected automatically
@@ -34,16 +41,19 @@ def seasons_page():
 # API to fetch season data based on user input
 @app.route('/api/seasons/<int:year>', methods=['GET'])
 def import_df_seasons(year):
-    data = pd.read_csv('df_seasons.csv')
+    data = pd.read_csv('/Users/breno.marcolino/Documents/GitHub/soccer_web_app/df_seasons')
     
-    # Ensure 'season' is numeric
+   # Ensure 'season' is numeric
     data['season'] = pd.to_numeric(data['season'], errors='coerce')
     
-    # Filter DataFrame
+    # Filter data for the requested season
     filtered_data = data[data['season'] == year]
 
-    # If no data is found, return an empty list
-    return jsonify(filtered_data.to_dict(orient='records'))
+    # Convert DataFrame to a list of dictionaries
+    data_list = filtered_data.to_dict(orient='records')
+
+    # Pass data to the HTML template
+    return render_template("seasons_filtered.html", data=data_list)
 
 if __name__ == '__main__':
     app.run(debug=True, port = 8080)

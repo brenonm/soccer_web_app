@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Season Stats</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        /* Header Section */
+        .header {
+            background: url('https://source.unsplash.com/1600x600/?soccer,stadium') no-repeat center center/cover;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .header h1 {
+            font-size: 40px;
+            font-weight: bold;
+            text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Table Styling */
+        .container {
+            width: 90%;
+            margin: 30px auto;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+
+        th {
+            background-color: #222;
+            font-size: 16px;
+            text-transform: uppercase;
+        }
+
+        tr:nth-child(even) {
+            background-color: #181818;
+        }
+
+        tr:hover {
+            background-color: #333;
+            transition: 0.3s;
+        }
+
+        /* No Data Message */
+        .no-data {
+            text-align: center;
+            font-size: 20px;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Season {{ data[0]['season'] if data else '' }} Stats</h1>
+    </div>
+
+    <div class="container">
+        {% if data %}
+            <table>
+                <thead>
+                    <tr>
+                        {% for column in data[0].keys() %}
+                            <th>{{ column.replace('_', ' ').title() }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            {% for value in row.values() %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p class="no-data">No data found for this season. ⚽</p>
+        {% endif %}
+    </div>
+
+</body>
+</html>
